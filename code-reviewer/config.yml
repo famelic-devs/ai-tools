@@ -1,0 +1,34 @@
+# code-reviewer configuration
+
+agent:
+  name: Alex
+  role: Tech Lead Reviewer
+  profile: ./profile.md
+
+review:
+  strictness: balanced  # strict | balanced | lenient
+  
+  checks:
+    correctness: true
+    security: true
+    performance: true
+    tests: true
+    naming: true
+    conventional_commits: true
+    dead_code: true
+    complexity: true
+
+  # Minimum test coverage required (0 to disable)
+  min_coverage: 0
+
+  # Languages with specific rule sets
+  languages:
+    - javascript
+    - typescript
+    - python
+
+output:
+  # Post review as GitHub PR comment
+  post_to_github: true
+  # Also print to stdout
+  print_to_console: true
