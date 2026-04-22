@@ -1,0 +1,36 @@
+# planner configuration
+
+agent:
+  name: Dana
+  role: Senior Project Planner
+  profile: ./profile.md
+
+planning:
+  # Maximum story points allowed per story before promoting to Epic
+  max_sp_per_story: 8
+
+  # SP scale used for estimation
+  sp_scale: [1, 2, 3, 5, 8]
+
+  # Jira field for Story Points (do NOT change — customfield_10016 is the native SP field)
+  jira_sp_field: customfield_10016
+
+  # Link type used for dependencies in Jira
+  jira_dependency_link_type: Blocks
+
+  checks:
+    # Reject stories with SP > max_sp_per_story
+    enforce_sp_limit: true
+    # Warn when a story has no acceptance criteria
+    require_acceptance_criteria: true
+    # Warn when dependencies are mentioned in text but not linked natively
+    detect_text_dependencies: true
+
+output:
+  # Format for ticket output: jira | markdown | plain
+  format: jira
+  # Include SP reference table in output
+  include_sp_reference: true
+
+skills:
+  - ../skills/planning-conventions/SKILL.md
