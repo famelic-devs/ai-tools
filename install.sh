@@ -107,27 +107,36 @@ setup_env() {
     return
   fi
 
-  if [[ ! -f "$env_example" ]]; then
-    warn "No .env.example found for ${tool_name} — skipping env setup"
-    return
-  fi
-
   info "Configuring ${tool_name}..."
   echo ""
 
-  # Copy template first
-  cp "$env_example" "$env_file"
-
-  # Prompt for each variable
-  for entry in "${env_vars[@]}"; do
-    local var="${entry%%:*}"
-    local desc="${entry#*:}"
-    local value
-    value="$(prompt_value "$var" "$desc")"
-    if [[ -n "$value" ]]; then
-      sed -i "s|^${var}=.*|${var}=${value}|" "$env_file"
-    fi
-  done
+  # Start from template if available, otherwise create from scratch
+  if [[ -f "$env_example" ]]; then
+    cp "$env_example" "$env_file"
+    for entry in "${env_vars[@]}"; do
+      local var="${entry%%:*}"
+      local desc="${entry#*:}"
+      local value
+      value="$(prompt_value "$var" "$desc")"
+      if [[ -n "$value" ]]; then
+        sed -i "s|^${var}=.*|${var}=${value}|" "$env_file"
+      fi
+    done
+  else
+    # No template — generate .env directly from prompts
+    {
+      echo "# Never commit this file to version control"
+      for entry in "${env_vars[@]}"; do
+        local var="${entry%%:*}"
+        local desc="${entry#*:}"
+        local default="${entry##*:}"
+        [[ "$default" == "$desc" ]] && default=""
+        local value
+        value="$(prompt_value "$var" "$desc" "$default")"
+        echo "${var}=${value}"
+      done
+    } > "$env_file"
+  fi
 
   success ".env created for ${tool_name}"
 }
