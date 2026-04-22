@@ -13,7 +13,7 @@ Each tool or sub-agent lives in its own directory with clear documentation on wh
 | Tool | Description | Status |
 |------|-------------|--------|
 | `code-reviewer` | Sub-agent that reviews PRs and enforces coding standards (e.g. Conventional Commits) | 🚧 Planned |
-| `planner` | Sub-agent that helps break down features into Jira tickets and GitHub issues | 🚧 Planned |
+| `planner` | Sub-agent that helps break down features into Jira tickets and GitHub issues | ✅ Available |
 | `test-writer` | Sub-agent that generates unit and integration tests for existing code | 🚧 Planned |
 | `test-runner` | Sub-agent that executes tests and reports results | 🚧 Planned |
 | `meeting-summarizer` | Sub-agent that processes meeting transcripts into action items and Jira tickets | 🚧 Planned |
