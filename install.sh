@@ -11,6 +11,7 @@ RESET='\033[0m'
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
+LOCAL_BIN_DIR="${HOME}/.local/bin"
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 info()    { echo -e "${BLUE}→${RESET} $*"; }
@@ -131,12 +132,34 @@ setup_env() {
   success ".env created for ${tool_name}"
 }
 
+# ─── Script linking ───────────────────────────────────────────────────────────
+link_script() {
+  local script_path="$1"
+  local script_name
+  script_name="$(basename "$script_path" .sh)"
+
+  mkdir -p "$LOCAL_BIN_DIR"
+  chmod +x "$script_path"
+
+  local target="${LOCAL_BIN_DIR}/${script_name}"
+
+  if [[ -L "$target" ]]; then
+    success "command '${script_name}' already linked"
+  elif [[ -f "$target" ]]; then
+    warn "command '${script_name}' already exists at ${target} (not a symlink — skipping)"
+  else
+    ln -s "$script_path" "$target"
+    success "command '${script_name}' linked → ${target}"
+  fi
+}
+
 install_code_reviewer() {
   header "Tool: code-reviewer"
   setup_env "${REPO_DIR}/code-reviewer" "code-reviewer" \
     "ANTHROPIC_API_KEY:Anthropic API key" \
     "GITHUB_TOKEN:GitHub token (pull_requests: read/write)" \
     "REVIEW_STRICTNESS:Review strictness (strict|balanced|lenient):balanced"
+  link_script "${REPO_DIR}/code-reviewer/review.sh"
 }
 
 install_planner() {
@@ -147,6 +170,7 @@ install_planner() {
     "JIRA_API_TOKEN:Jira API token" \
     "JIRA_USER_EMAIL:Jira user email" \
     "JIRA_PROJECT_KEY:Default Jira project key (e.g. SCRUM)"
+  link_script "${REPO_DIR}/planner/plan.sh"
 }
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
@@ -162,11 +186,17 @@ main() {
   header "Done"
   echo ""
   echo -e "  Skills linked to ${BLUE}${CLAUDE_SKILLS_DIR}${RESET}"
+  echo -e "  Commands linked to ${BLUE}${LOCAL_BIN_DIR}${RESET}"
   echo -e "  Tools configured in their respective ${BLUE}.env${RESET} files"
   echo ""
+  if [[ ":$PATH:" != *":${LOCAL_BIN_DIR}:"* ]]; then
+    warn "${LOCAL_BIN_DIR} is not in your PATH. Add this to your shell profile:"
+    echo -e "       ${BLUE}export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
+    echo ""
+  fi
   echo -e "  ${BOLD}Next steps:${RESET}"
-  echo -e "  • code-reviewer: run ${BLUE}./code-reviewer/review.sh <PR_number>${RESET}"
-  echo -e "  • planner:       run ${BLUE}./planner/plan.sh \"feature description\"${RESET}"
+  echo -e "  • code-reviewer: run ${BLUE}review <PR_number>${RESET}"
+  echo -e "  • planner:       run ${BLUE}plan \"feature description\"${RESET}"
   echo ""
 }
 
