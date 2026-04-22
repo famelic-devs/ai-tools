@@ -18,6 +18,14 @@ Each tool or sub-agent lives in its own directory with clear documentation on wh
 | `test-runner` | Sub-agent that executes tests and reports results | 🚧 Planned |
 | `meeting-summarizer` | Sub-agent that processes meeting transcripts into action items and Jira tickets | 🚧 Planned |
 
+## Skills
+
+Reusable instruction sets injected into sub-agents at runtime.
+
+| Skill | Description |
+|-------|-------------|
+| `planning-conventions` | Agile planning rules: story sizing, Epic definition, Jira field conventions, backlog refinement checklist |
+
 ## Getting Started
 
 Each tool directory contains its own `README.md` with specific setup instructions.
@@ -56,6 +64,9 @@ ai-tools/
 ├── planner/
 │   ├── README.md
 │   └── ...
+├── skills/
+│   └── planning-conventions/
+│       └── SKILL.md
 └── ...
 ```
 
